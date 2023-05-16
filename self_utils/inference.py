@@ -8,7 +8,10 @@ def img_preprocessing(np_img,device,newsize=640):
     np_img=letterbox(np_img,new_shape=newsize)[0]
     np_img = np_img[:, :, ::-1].transpose(2, 0, 1)
     np_img = np.ascontiguousarray(np_img)
-    tensor_img=torch.from_numpy(np_img).to("cuda:{}".format(device))
+    if device != "cpu":
+        tensor_img=torch.from_numpy(np_img).to("cuda:{}".format(device))
+    else:
+        tensor_img = torch.from_numpy(np_img)
     tensor_img=tensor_img[np.newaxis,:].float()
     tensor_img /= 255.0
     return tensor_img

@@ -12,8 +12,11 @@ def main(yolo5_config):
     a = time.time()
     class_names = []
     # 加载模型
-    Model = torch.load(yolo5_config.weights, map_location=lambda storage, loc: storage.cuda(int(yolo5_config.device)))[
+    if yolo5_config.device != "cpu":
+        Model = torch.load(yolo5_config.weights, map_location=lambda storage, loc: storage.cuda(int(yolo5_config.device)))[
         'model'].float().fuse().eval()
+    else:
+        Model = torch.load(yolo5_config.weights, map_location=torch.device('cpu'))['model'].float().fuse().eval()
     # 模型能检测的类别['person', 'bicycle', 'car', 'motorcycle', 'airplane', 'bus', 'train', 'truck', 'boat', 'traffic light', ...]
     classnames = Model.module.names if hasattr(Model, 'module') else Model.names
     # print(classnames)
@@ -95,7 +98,7 @@ if __name__ == "__main__":
     parser.add_argument('--conf_thres', type=float, default=0.4, help='object confidence threshold')
     parser.add_argument('--iou_thres', type=float, default=0.4, help='IOU threshold for NMS')
     # GPU（0表示设备的默认的显卡）或CPU
-    parser.add_argument('--device', default='0', help='cuda device, i.e. 0 or 0,1,2,3 or cpu')
+    parser.add_argument('--device', default='cpu', help='cuda device, i.e. 0 or 0,1,2,3 or cpu')
     # 通过classes来过滤yolo要检测类别，0表示检测人，1表示自行车，更多具体类别数字可以在19行附近打印出来
     parser.add_argument('--classes', default=0, type=int, help='filter by class: --class 0, or --class 0 1 2 3')
 
