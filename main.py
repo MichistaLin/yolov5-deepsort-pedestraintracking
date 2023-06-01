@@ -48,7 +48,7 @@ def main(yolo5_config):
     videowriter = None
     fps = int(mycap.get(5))
     t = int(1000 / fps)
-    mkfile_time = datetime.datetime.strftime(datetime.datetime.now(), '%Y-%m-%d-%H-%M-%S')
+    mkfile_time = datetime.strftime(datetime.now(), '%Y-%m-%d-%H-%M-%S')
     while mycap.ifcontinue():
         ret, img = mycap.read()
         if ret:
