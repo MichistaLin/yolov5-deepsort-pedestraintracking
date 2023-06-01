@@ -48,6 +48,7 @@ def main(yolo5_config):
     videowriter = None
     fps = int(mycap.get(5))
     t = int(1000 / fps)
+    mkfile_time = datetime.datetime.strftime(datetime.datetime.now(), '%Y-%m-%d-%H-%M-%S')
     while mycap.ifcontinue():
         ret, img = mycap.read()
         if ret:
@@ -58,7 +59,7 @@ def main(yolo5_config):
                 fourcc = cv2.VideoWriter_fourcc(
                     'm', 'p', '4', 'v')  # opencv3.0
                 videowriter = cv2.VideoWriter(
-                    './output/result.mp4', fourcc, fps, (result_img.shape[1], result_img.shape[0]))
+                    './output/result' + mkfile_time + '.mp4', fourcc, fps, (result_img.shape[1], result_img.shape[0]))
             videowriter.write(result_img)
             result_img = imutils.resize(result_img, height=500)
             cv2.imshow('video', result_img)
