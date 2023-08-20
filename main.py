@@ -5,6 +5,20 @@ from self_utils.overall_method import Object_Counter, Image_Capture
 from deep_sort.configs.parser import get_config
 from deep_sort.deep_sort import DeepSort
 import imutils
+import torch.nn as nn
+from packaging import version
+
+
+# 比较两个包的版本号，因为pytorch1.10.0以上版本会导致代码出现小bug，所以必须判断不同版本的pytorch以增强代码的健壮性
+def compare_versions(version1, version2):
+    v1 = version.parse(version1)
+    v2 = version.parse(version2)
+    if v1 > v2:
+        return 1
+    elif v1 < v2:
+        return -1
+    else:
+        return 0
 
 
 def main(yolo5_config):
@@ -17,6 +31,17 @@ def main(yolo5_config):
         'model'].float().fuse().eval()
     else:
         Model = torch.load(yolo5_config.weights, map_location=torch.device('cpu'))['model'].float().fuse().eval()
+
+    # 本项目最好运行在版本小于等于1.10.0的pytorch上
+    best_torch_version = "1.10.0"
+    # 当前torch版本
+    current_torch_version = str(torch.__version__).split('+')[0]
+    result = compare_versions(best_torch_version, current_torch_version)
+    # 如果当前torch版本大于1.10.0，则需要设置一下recompute_scale_factor
+    if result == -1:
+        for m in Model.modules():
+            if isinstance(m, nn.Upsample):
+                m.recompute_scale_factor = None
     # 模型能检测的类别['person', 'bicycle', 'car', 'motorcycle', 'airplane', 'bus', 'train', 'truck', 'boat', 'traffic light', ...]
     classnames = Model.module.names if hasattr(Model, 'module') else Model.names
     # print(classnames)
@@ -47,6 +72,8 @@ def main(yolo5_config):
     total_num = mycap.get_length()
     videowriter = None
     fps = int(mycap.get(5))
+    if fps == 0:
+        fps = 25
     t = int(1000 / fps)
     mkfile_time = datetime.strftime(datetime.now(), '%Y-%m-%d-%H-%M-%S')
     while mycap.ifcontinue():
@@ -55,6 +82,9 @@ def main(yolo5_config):
             # 开始检测图片中的人
             result_img = Counting_Processing(img, yolo5_config, Model, class_names, deepsort_tracker, Obj_Counter)
             # print(result_img)
+            if type(result_img) == AttributeError:
+                print("错误为{}".format(result_img))
+                exit(1)
             if videowriter is None:
                 fourcc = cv2.VideoWriter_fourcc(
                     'm', 'p', '4', 'v')  # opencv3.0

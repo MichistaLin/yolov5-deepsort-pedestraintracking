@@ -17,7 +17,6 @@ def Counting_Processing(input_img,yolo5_config,model,class_names,Tracker,Obj_Cou
         return result_img
 
     except Exception as e:
-        print("Wrong:",e, 'multi_tasks.py--->Counting_Processing')
         return e
 
     
