@@ -37,4 +37,4 @@ parser.add_argument('--classes', default=0, type=int, help='filter by class: --c
 
 检测效果：
 
-![](.\output\demo.jpg)
+![](https://img-blog.csdnimg.cn/965128beb6804047980329b7c4911275.jpeg#pic_center)
