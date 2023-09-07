@@ -115,13 +115,22 @@ class Object_Counter:
     def __init__(self,name_list) -> None:
         super().__init__()
 
-    def draw_counter(self,img,present_num, color=[255,0,0],thickness=None,fontsize=None):
-        thickness = max(2,round(0.0016 * (img.shape[0] + img.shape[1]) / 2)) if thickness==None else thickness
-        fontsize = 0.5*thickness if fontsize==None else fontsize
-        top=(5,5)
-        text_info = "present person:  {}".format(present_num)
-        t_size=cv2.getTextSize(text_info, cv2.FONT_HERSHEY_TRIPLEX, fontsize , thickness+2)[0]
-        cv2.putText(img, text_info, (top[0], top[1]+t_size[1]+2), cv2.FONT_HERSHEY_TRIPLEX, fontsize, color, thickness)
+    def draw_counter(self, img, present_num, total_num, text, isCountPresent, color=[255, 0, 0], thickness=None, fontsize=None):
+        thickness = max(2, round(0.0016 * (img.shape[0] + img.shape[1]) / 2)) if thickness == None else thickness
+        fontsize = 0.5 * thickness if fontsize == None else fontsize
+        top = (5, 5)
+        if isCountPresent:
+            text_info = "{}: {}".format(text, present_num)
+        else:
+            text_info = "{}: {}".format(text, total_num)
+        t_size = cv2.getTextSize(text_info, cv2.FONT_HERSHEY_TRIPLEX, fontsize, thickness + 2)[0]
+        cv2.putText(img, text_info, (top[0], top[1] + t_size[1] + 2), cv2.FONT_HERSHEY_TRIPLEX, fontsize, color,
+                    thickness)
+        if not isCountPresent:
+            text_info1 = "{}: {}".format("present person", present_num)
+            cv2.putText(img, text_info1, (top[0], top[1] + t_size[1] + 2 + 30), cv2.FONT_HERSHEY_TRIPLEX, fontsize,
+                        color,
+                        thickness)
 
         return img
 

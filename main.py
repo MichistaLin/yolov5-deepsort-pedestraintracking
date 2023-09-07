@@ -80,7 +80,12 @@ def main(yolo5_config):
         ret, img = mycap.read()
         if ret:
             # 开始检测图片中的人
-            result_img = Counting_Processing(img, yolo5_config, Model, class_names, deepsort_tracker, Obj_Counter)
+            """
+                isCountPresent:
+                    True：表示只显示当前人数
+                    False：表示显示总人数和当前人数
+            """
+            result_img = Counting_Processing(img, yolo5_config, Model, class_names, deepsort_tracker, Obj_Counter, isCountPresent = False)
             # print(result_img)
             if type(result_img) == AttributeError:
                 print("错误为{}".format(result_img))

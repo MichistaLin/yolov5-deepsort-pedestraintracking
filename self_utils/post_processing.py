@@ -1,7 +1,7 @@
 import cv2,random,torch
 import numpy as np
 from skimage import draw
-
+from .globals_val import Global
 from utils.utils import scale_coords,plot_one_box
 
 
@@ -36,22 +36,32 @@ def deepsort_update(Tracker,pred,inference_shape,np_img):
     return outputs
 
 
-def count_post_processing(np_img,pred,class_names,inference_shape,Tracker,Obj_Counter):
+def count_post_processing(np_img,pred,class_names,inference_shape,Tracker,Obj_Counter, isCountPresent):
+    """
+        isCountPresent:
+            True：表示只显示当前人数
+            False：表示显示总人数和当前人数
+    """
     present_num = 0
+    if isCountPresent:
+        text = "present person"
+    else:
+        text = "total person"
     if pred is not None and len(pred):
-        outputs=deepsort_update(Tracker,pred,inference_shape,np_img)
+        outputs = deepsort_update(Tracker, pred, inference_shape, np_img)
         if len(outputs) > 0:
             bbox_xyxy = outputs[:, :4]
             identities = outputs[:, 5]
             present_num = len(identities)
-
+            Global.total_person = Global.total_person | set(identities)
             for i in range(len(outputs)):
-                box=bbox_xyxy[i]
-                trackid=identities[i]
-                text_info = '%s,ID:%d' % (class_names[0],int(trackid))
-                plot_one_box(box, np_img, text_info=text_info, color=(0,0,255))
+                box = bbox_xyxy[i]
+                trackid = identities[i]
+                text_info = '%s,ID:%d' % (class_names[0], int(trackid))
+                plot_one_box(box, np_img, text_info=text_info, color=(0, 0, 255))
     # 可视化计数结果
-    np_img=Obj_Counter.draw_counter(np_img,present_num)
+    total_num = len(Global.total_person)
+    np_img = Obj_Counter.draw_counter(np_img, present_num, total_num, text, isCountPresent)
     return np_img
 
                 

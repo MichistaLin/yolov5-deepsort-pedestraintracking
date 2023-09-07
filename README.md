@@ -33,6 +33,20 @@ parser.add_argument('--classes', default=0, type=int, help='filter by class: --c
 
 ```
 
+看到有挺多小伙伴要求总人数，现在加了一个参数`isCounntPresent`
+
+```python
+"""
+  isCountPresent:
+    True：表示只显示当前人数
+    False：表示显示总人数和当前人数
+"""
+result_img = Counting_Processing(img, yolo5_config, Model, class_names, deepsort_tracker, Obj_Counter, isCountPresent = False)
+
+```
+
+
+
 
 
 检测效果：

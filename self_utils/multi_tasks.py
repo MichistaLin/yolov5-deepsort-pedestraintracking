@@ -5,14 +5,14 @@ from . inference import yolov5_prediction,img_preprocessing
 from . post_processing import count_post_processing
 
 
-def Counting_Processing(input_img,yolo5_config,model,class_names,Tracker,Obj_Counter):
+def Counting_Processing(input_img,yolo5_config,model,class_names,Tracker,Obj_Counter, isCountPresent):
     try:
         # 把图片转换成tensor类型
         tensor_img=img_preprocessing(input_img,yolo5_config.device,yolo5_config.img_size)
         # 使用yolov5进行检测
         pred=yolov5_prediction(model,tensor_img,yolo5_config.conf_thres, yolo5_config.iou_thres,yolo5_config.classes)
         # 跟踪计数
-        result_img=count_post_processing(input_img,pred,class_names,tensor_img.shape,Tracker,Obj_Counter)
+        result_img=count_post_processing(input_img,pred,class_names,tensor_img.shape,Tracker,Obj_Counter, isCountPresent)
 
         return result_img
 
